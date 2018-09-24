@@ -1,0 +1,25 @@
+{
+  "name": "siscad-crawler",
+  "version": "1.0.0",
+  "description": "A siscad crawler",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CelsoUliana/Siscad-crawler.git"
+  },
+  "author": "Celso Antonio Uliana Junior",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CelsoUliana/Siscad-crawler/issues"
+  },
+  "homepage": "https://github.com/CelsoUliana/Siscad-crawler#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "fs": "0.0.1-security",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  }
+}
