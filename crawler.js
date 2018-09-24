@@ -1,7 +1,8 @@
 const rp = require('request-promise'),
-   request = require('request'),
-   fs = require('fs'), 
-    cheerio = require('cheerio');
+    request = require('request'),
+    fs = require('fs'), 
+    cheerio = require('cheerio'),
+    Promise = require('bluebird');;
 
 
 var urlBase = 'https://siscad.ufms.br/'
@@ -11,6 +12,7 @@ var j = request.jar()
 var headers = {
     // setar os headers
 }
+
 
 var objMaterias = {};
 
@@ -33,9 +35,10 @@ var objMaterias = {};
     })
      .then(response => {
       //Entrou na Notas/Frequencia
-    var fh = fs.readFileSync('paginaNotasFrequencia.html','latin1');
+        fs.writeFileSync('paginaNotasFrequencia.html', response.body)
+        var fh = fs.readFileSync('paginaNotasFrequencia.html','latin1');
         console.log('Entrou na Notas/Frequencia')
-      //fs.writeFileSync('paginaNotasFrequencia.html', response.body)
+        //console.log(response);
         var $ = cheerio.load(fh);
         // var $ = cheerio.load(response.body)
         // $('table[id="list"]').find('tr').first().each(function(i,elem){
@@ -59,32 +62,97 @@ var objMaterias = {};
         // var urlMateria = urlBase + 
 
 
-    //     var urlMateria = 'https://siscad.ufms.br/titan.php?toSection=14&toAction=view&page=1&pesq0=0&pesq1=&pesq2=&itemId=6247907'
-       // return rp({method: 'GET', uri: objMaterias., jar: j, resolveWithFullResponse: true, followAllRedirects: true, encoding: 'latin1'})
-    // })
-    // .then(response => {
-    //     //Entrou na materia escolhida
-    //     console.log('Entrou na materia escolhida')
-    //     // fs.writeFileSync('paginaMateria.html', response.body, 'latin1')
+         var urlMateria = 'https://siscad.ufms.br/titan.php?toSection=14&toAction=view&page=1&pesq0=0&pesq1=&pesq2=&itemId=6247907'
 
-    //     var $ = cheerio.load(response.body)
+        //console.log(objMaterias[Object.keys(objMaterias).shift()]);
 
-    //     var nomeMateria = $('span[class="infoField"]').text()
-    //     console.log(nomeMateria);
+        var pa = [];
 
-    //     var tableNotas;
-    //     $('div[class="infoGroup"]').each(function(i, elem) {
-    //         // console.log($(this))
-    //         if(i===2){
-    //             tableNotas = $(this).html()
-    //         }
-    //     })
+        for(var materia in objMaterias){
+            var obj = {name: materia, method: 'GET', url : urlBase + objMaterias[materia], jar: j, resolveWithFullResponse : true, followAllRedirects: true, encoding : 'latin1'};
+            pa.push(obj);
+        }
 
-    //     console.log(tableNotas);
+        //console.log(pa);
 
-    //     fs.writeFileSync('tabelaNotas.html', `${nomeMateria}<br><br>${tableNotas}`, 'latin1')
-    //     return;
-    // })
-    // .catch(err => {
-    //  console.log(err);
+
+        Promise.all(pa).each(pAtual => {
+            console.log('Entrou na materia  ' + pAtual.name);
+
+            return rp(pAtual)
+                .then(response => {
+                    
+                    var tableNotas;
+
+                    //console.log(response.body);
+
+                    var $ = cheerio.load(response.body);
+
+                    var nomeMateria = $('span[class="infoField"]').text();
+                    
+                    $('div[class="infoGroup"]').each(function(i, elem) {
+                        //console.log($(this))
+                        if(i === 2){
+                            tableNotas = $(this).html()
+                        }
+                    })
+
+                    nomeMateria = nomeMateria.substring(24,35);
+
+                    fs.writeFileSync('paginaMateria' + nomeMateria + '.html', response.body, 'latin1');
+                    fs.writeFileSync('tabelaNotas' + nomeMateria + '.html' , `${nomeMateria}<br><br>${tableNotas}`, 'latin1')
+
+
+                    fs.appendFile('chaves.txt', nomeMateria + '\n', function (err) {
+                        if (err) throw err;
+                        console.log('Saved!');
+                    });
+                })
+        })
+
+       /* var ch = fs.readFileSync('chaves.txt', 'utf8', function(err, data) {
+            if(err) throw err;
+            console.log(data);
+        });*/
+
+        //fs.writeFileSync('paginaMateria.html', resultado, 'latin1');
+       /* Promise.all(pa).each(pAtual => {
+            if(pAtual.isFulfilled()){
+                resultado.push(pAtual.value());
+            }
+            else{
+                console.log(pAtual.reason());
+            }
+        })
+        .then(() => {
+            console.log(resultado);
+        })*/
+        /*return rp({method: 'GET', uri: urlBase + objMaterias[Object.keys(objMaterias).shift()], jar: j, resolveWithFullResponse: true, followAllRedirects: true, encoding: 'latin1'})
+     })
+     .then(response => {
+         //Entrou na materia escolhida
+         console.log('Entrou na materia escolhida')
+          fs.writeFileSync('paginaMateria.html', response.body, 'latin1')
+
+         var $ = cheerio.load(response.body)
+
+         var nomeMateria = $('span[class="infoField"]').text()
+         console.log(nomeMateria);
+
+         var tableNotas;
+         $('div[class="infoGroup"]').each(function(i, elem) {
+            console.log($(this))
+            if(i === 2){
+                tableNotas = $(this).html()
+            }
+        })
+
+        console.log(tableNotas);
+
+        fs.writeFileSync('tabelaNotas.html', `${nomeMateria}<br><br>${tableNotas}`, 'latin1')
+        return;
+    })
+    .catch(err => {
+        console.log(err);
+    */
  });

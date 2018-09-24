@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/CelsoUliana/Siscad-crawler#readme",
   "dependencies": {
+    "bluebird": "^3.5.2",
     "cheerio": "^1.0.0-rc.2",
     "fs": "0.0.1-security",
     "request": "^2.88.0",
