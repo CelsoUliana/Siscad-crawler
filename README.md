@@ -3,17 +3,17 @@ Node.js Siscad(https://siscad.ufms.br/) crawler
 
 ## Usage
 
-Set your siscad login and password in function.
+Set your siscad login and password in function logarSiscad.
 Then:
-    $ node crawler.js
+    $ node siscad.js
 or
-    $ nodemon crawler.js
+    $ nodemon siscad.js
 
 ## Como usar
 
-Preencher o form com login e password.
+preencha a função logarSiscad(login, senha) or exporte
 Em seguida:
-    $ node crawler.js
+    $ node siscad.js
 ou
-    $ nodemon crawler.js
+    $ nodemon siscad.js
 
