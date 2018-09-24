@@ -14,7 +14,6 @@ const urlNotasFrequencia    = 'https://siscad.ufms.br/titan.php?toSection=14'
 const htmlRes               = 'Notas.html'
 const htmlTable             = 'Tabelas.html'
 
-var urlMateria;
 var j = request.jar()
 
 const logarSiscad = async (login, password) => {
@@ -30,9 +29,9 @@ const logarSiscad = async (login, password) => {
             uri: urlBase,
             followAllRedirects: true,
             resolveWithFullResponse: true,
-        });
+        })
 
-        console.log('Acessou a página principal');
+        console.log('Acessou a página principal')
 
         response = await rp({
             jar: j,
@@ -54,25 +53,25 @@ const logarSiscad = async (login, password) => {
 
         console.log('Entrou na Notas/Frequencia')
 
-        let arr = await returnCheerio(response.body);
+        let arr = await returnCheerio(response.body)
 
-        let ps = await returnPromises(arr);
+        let ps = await returnPromises(arr)
 
         Promise.all(ps).each(async pAtual => {
 
-            console.log('Entrou na materia  ' + pAtual.name);
+            console.log('Entrou na materia  ' + pAtual.name)
 
-            response = await rp(pAtual);
+            response = await rp(pAtual)
 
-            appendTableHtml(response.body, htmlTable);
-            appendFullHtml(response.body, htmlRes);
+            appendTableHtml(response.body, htmlTable)
+            appendFullHtml(response.body, htmlRes)
         })
     }
 
     catch(err) {
-        throw err;
+        throw err
     }
-};
+}
 
 async function returnPromises(objMaterias){
 
@@ -87,50 +86,50 @@ async function returnPromises(objMaterias){
             followAllRedirects: true, 
             resolveWithFullResponse : true, 
             url : urlBase + objMaterias[materia], 
-        };
+        }
 
-        pa.push(obj);
+        pa.push(obj)
     }
 
-    return await pa;
-};
+    return await pa
+}
 
 async function returnCheerio(responseBody){
 
-    var $ = cheerio.load(responseBody);
+    var $ = cheerio.load(responseBody)
     
-    var objMaterias = {};
+    var objMaterias = {}
 
-    $('div[class="groupHeader"]').first().nextUntil('div[class="groupHeader"]').find('tr').each(function(i, elem){
-        materia = $(this).children().children().text()
-        urlMateria = $(this).children().children().attr('href')
+    $('div[class="groupHeader"]').first().nextUntil('div[class="groupHeader"]').find('tr').each(function(){
+        var materia = $(this).children().children().text()
+        var urlMateria = $(this).children().children().attr('href')
         materia = materia.replace(/[^a-zA-Z]/g,'')
 
         if(materia != '')
-            objMaterias[materia] = urlMateria;
-    });
+            objMaterias[materia] = urlMateria
+    })
 
-    return await objMaterias;
-};
+    return await objMaterias
+}
 
 async function appendFullHtml(responseBody, html){
 
     fs.appendFile(html, responseBody, 'latin1', async (err) => {
         if (err) 
-            throw err;
-        console.log('Salvou!');
-    });
-};
+            throw err
+        console.log('Salvou!')
+    })
+}
 
 async function appendTableHtml(responseBody, html){
 
-    var tableNotas;
+    var tableNotas
 
-    var $ = cheerio.load(responseBody);
+    var $ = cheerio.load(responseBody)
 
-    var nomeMateria = $('span[class="infoField"]').text();
+    var nomeMateria = $('span[class="infoField"]').text()
                     
-    $('div[class="infoGroup"]').each(function(i, elem) {
+    $('div[class="infoGroup"]').each(function(i) {
         if(i === 2){
             tableNotas = $(this).html()
         }
@@ -138,9 +137,9 @@ async function appendTableHtml(responseBody, html){
 
     fs.appendFile(html, `<br>${nomeMateria}<br><br>${tableNotas}<br><br>` ,'latin1',  async (err) => {
         if (err) 
-            throw err;
-        console.log('Salvou!');
-    });
+            throw err
+        console.log('Salvou!')
+    })
 }
 
 // username and password goes here
