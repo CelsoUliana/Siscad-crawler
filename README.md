@@ -14,7 +14,7 @@ or:
 
 ## Como usar
 
-preencha a função logarSiscad(login, senha) or exporte.
+Preencha a função logarSiscad(login, senha) ou exporte.
 
 Em seguida:
 
