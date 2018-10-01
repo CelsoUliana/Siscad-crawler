@@ -6,7 +6,6 @@ const rp        = require('request-promise')
 const request   = require('request')
 const fs        = require('fs')
 const cheerio   = require('cheerio')
-const Promise   = require('bluebird')
 
 const urlBase               = 'https://siscad.ufms.br/'
 const urlLogin              = 'https://siscad.ufms.br/titan.php'
@@ -53,63 +52,30 @@ const logarSiscad = async (login, password) => {
 
         console.log('Entrou na Notas/Frequencia')
 
-        let arr = await returnCheerio(response.body)
+        const arr = await getUrlMaterias(response.body)
 
-        let ps = await returnPromises(arr)
+        await arr.forEach(async (materia) => {
 
-        Promise.all(ps).each(async pAtual => {
+            console.log(`Entrou na materia ${materia.nome}`)
 
-            console.log('Entrou na materia  ' + pAtual.name)
+            const options = {
+                jar: j,
+                encoding: 'latin1',
+                followAllRedirects: true,
+                resolveWithFullResponse: true,
+                url: `${urlBase}${materia.url}`,
+            }
 
-            response = await rp(pAtual)
+            response = await rp(options)
 
             appendTableHtml(response.body, htmlTable)
             appendFullHtml(response.body, htmlRes)
         })
-    }
+    } 
 
     catch(err) {
         throw err
     }
-}
-
-async function returnPromises(objMaterias){
-
-    var pa = []
-
-    for(var  materia in objMaterias){
-
-        var obj = {
-            jar: j, 
-            name: materia,
-            encoding : 'latin1',  
-            followAllRedirects: true, 
-            resolveWithFullResponse : true, 
-            url : urlBase + objMaterias[materia], 
-        }
-
-        pa.push(obj)
-    }
-
-    return await pa
-}
-
-async function returnCheerio(responseBody){
-
-    var $ = cheerio.load(responseBody)
-    
-    var objMaterias = {}
-
-    $('div[class="groupHeader"]').first().nextUntil('div[class="groupHeader"]').find('tr').each(function(){
-        var materia = $(this).children().children().text()
-        var urlMateria = $(this).children().children().attr('href')
-        materia = materia.replace(/[^a-zA-Z]/g,'')
-
-        if(materia != '')
-            objMaterias[materia] = urlMateria
-    })
-
-    return await objMaterias
 }
 
 async function appendFullHtml(responseBody, html){
@@ -142,5 +108,28 @@ async function appendTableHtml(responseBody, html){
     })
 }
 
+async function getUrlMaterias(responseBody) {
+
+    const $ = cheerio.load(responseBody)
+    let urlMateria
+    const arr = []
+  
+    $('div[class="groupHeader"]').first().nextUntil('div[class="groupHeader"]').find('tr')
+        .each((i, elem) => {
+            const objMaterias = {}
+            let materia = $(elem).children().children().text()
+            materia = materia.replace(/[^a-zA-Z ]+/g, '')
+            urlMateria = $(elem).children().children().attr('href')
+  
+            if (materia) {
+                objMaterias.nome = materia
+                objMaterias.url = urlMateria
+                arr.push(objMaterias)
+            }
+        })
+  
+    return await arr
+}
+
 // username and password goes here
-logarSiscad('SeuLogin', 'SuaSenha')
+logarSiscad('Login', 'Password')
