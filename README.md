@@ -3,14 +3,12 @@ Node.js Siscad(https://siscad.ufms.br/) crawler.
 
 ## Usage
 
-Set your siscad login and password in function logarSiscad or export.
+Run one of the scripts below and provide your login and password:
 
-Then:
-
-    $ node siscad.js
+    $ node siscad.js [login] [password]
 or:
 
-    $ nodemon siscad.js
+    $ nodemon siscad.js [login] [password]
 
 ## Como usar
 
