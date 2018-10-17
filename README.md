@@ -12,7 +12,7 @@ Install using:
     
     $npm i
 
-Run one of the scripts below and provide your login and password:
+Run the script like below and provide your login and password:
 
     $ node siscad.js [RGA] [password]
 
