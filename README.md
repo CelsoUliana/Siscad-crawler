@@ -1,23 +1,28 @@
 # Siscad-crawler
-Node.js Siscad(https://siscad.ufms.br/) crawler.
+A simple Node.js Siscad(https://siscad.ufms.br/) crawler.
+Used to fetch all current grades from ongoing semester.
+
+Um simples crawler do siscad(https://siscad.ufms.br/).
+Usado para pegar todas as notas do semestre atual.
+
 
 ## Usage
 
+Install using:
+    
+    $npm i
+
 Run one of the scripts below and provide your login and password:
 
-    $ node siscad.js [login] [password]
-or:
-
-    $ nodemon siscad.js [login] [password]
+    $ node siscad.js [RGA] [password]
 
 ## Como usar
 
-Preencha a função logarSiscad(login, senha) ou exporte.
+Instale usando:
 
-Em seguida:
+    $npm i
 
-    $ node siscad.js
-ou:
+Rode da maneira abaixo informando seu RGA e senha:
 
-    $ nodemon siscad.js
+    $ node siscad.js [RGA] [Senha]
 
