@@ -1,3 +1,6 @@
+
+# No longer works because siscad.ufms.br is no longer the cad system.
+
 # Siscad-crawler
 A simple Node.js Siscad(https://siscad.ufms.br/) crawler.
 Used to fetch all current grades from ongoing semester.
